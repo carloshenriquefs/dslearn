@@ -1,13 +1,12 @@
 package com.devsuperior.dslearn.entities;
 
 import com.devsuperior.dslearn.entities.pk.EnrollmentPK;
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "tb_enrollment")
@@ -23,6 +22,9 @@ public class Enrollment implements Serializable {
     private boolean available;
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private boolean onlyUpdate;
+
+    @ManyToMany(mappedBy = "enrollmentsDone")
+    private Set<Lesson> lessonsDone = new HashSet<>();
 
     public Enrollment() {
     }
