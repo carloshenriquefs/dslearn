@@ -3,13 +3,12 @@ package com.devsuperior.dslearn.entities;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "tb_lesson")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Lesson implements Serializable {
+public abstract class Lesson {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,19 +20,24 @@ public abstract class Lesson implements Serializable {
     @JoinColumn(name = "section_id")
     private Section section;
 
+    @OneToMany(mappedBy = "lesson")
+    private List<Deliver> deliveries = new ArrayList<>();
+
     @ManyToMany
     @JoinTable(name = "tb_lessons_done",
             joinColumns = @JoinColumn(name = "lesson_id"),
             inverseJoinColumns = {
                     @JoinColumn(name = "user_id"),
                     @JoinColumn(name = "offer_id")
-            })
+            }
+    )
     private Set<Enrollment> enrollmentsDone = new HashSet<>();
 
     public Lesson() {
     }
 
     public Lesson(Long id, String title, Integer position, Section section) {
+        super();
         this.id = id;
         this.title = title;
         this.position = position;
@@ -76,18 +80,24 @@ public abstract class Lesson implements Serializable {
         return enrollmentsDone;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-
-        Lesson lesson = (Lesson) object;
-
-        return id.equals(lesson.id);
+    public List<Deliver> getDeliveries() {
+        return deliveries;
     }
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return Objects.hash(id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Lesson other = (Lesson) obj;
+        return Objects.equals(id, other.id);
     }
 }
